@@ -1,4 +1,4 @@
-module github.com/reef-pi/drivers
+module github.com/astrohome/drivers
 
 go 1.23.2
 
