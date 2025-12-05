@@ -85,7 +85,7 @@ func (f *factory) NewDriver(parameters map[string]interface{}, hardwareResources
 	driver := &AtlasEZO{
 		addr:  byte(address),
 		bus:   hardwareResources.(i2c.Bus),
-		delay: 1500 * time.Millisecond,
+		delay: 1600 * time.Millisecond,
 		meta: hal.Metadata{
 			Name:         _ezoName,
 			Description:  "Atlas Scientific EZO board for pH sensor",
