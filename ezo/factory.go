@@ -16,6 +16,7 @@ type factory struct {
 }
 
 const addressParam = "Address"
+const delayParam = "Delay"
 
 var ezoFactory *factory
 var once sync.Once
@@ -36,6 +37,12 @@ func Factory() hal.DriverFactory {
 					Type:    hal.Integer,
 					Order:   0,
 					Default: 68,
+				},
+				{
+					Name:    delayParam,
+					Type:    hal.Integer,
+					Order:   1,
+					Default: 1600,
 				},
 			},
 		}
@@ -72,6 +79,18 @@ func (f *factory) ValidateParameters(parameters map[string]interface{}) (bool, m
 		failures[addressParam] = append(failures[addressParam], failure)
 	}
 
+	if delay, ok := parameters[delayParam]; ok {
+		val, ok := hal.ConvertToInt(delay)
+		if !ok {
+			failure := fmt.Sprint(delayParam, " is not an integer. ", delay, " was received.")
+			failures[delayParam] = append(failures[delayParam], failure)
+		}
+		if val < 0 {
+			failure := fmt.Sprint(delayParam, " must be positive. ", delay, " was received.")
+			failures[delayParam] = append(failures[delayParam], failure)
+		}
+	}
+
 	return len(failures) == 0, failures
 }
 
@@ -82,10 +101,15 @@ func (f *factory) NewDriver(parameters map[string]interface{}, hardwareResources
 
 	address, _ := hal.ConvertToInt(parameters[addressParam])
 
+	delay := 1600
+	if d, ok := parameters[delayParam]; ok {
+		delay, _ = hal.ConvertToInt(d)
+	}
+
 	driver := &AtlasEZO{
 		addr:  byte(address),
 		bus:   hardwareResources.(i2c.Bus),
-		delay: 1600 * time.Millisecond,
+		delay: time.Duration(delay) * time.Millisecond,
 		meta: hal.Metadata{
 			Name:         _ezoName,
 			Description:  "Atlas Scientific EZO board for pH sensor",
