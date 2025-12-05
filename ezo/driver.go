@@ -50,7 +50,7 @@ func (a *AtlasEZO) extractFloatResponse() (float64, error) {
 }
 
 func (a *AtlasEZO) command(cmd string) error {
-	if err := a.bus.WriteBytes(a.addr, []byte(cmd+"\000")); err != nil {
+	if err := a.bus.WriteBytes(a.addr, []byte(cmd)); err != nil {
 		return err
 	}
 	time.Sleep(a.delay)
