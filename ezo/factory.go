@@ -48,7 +48,7 @@ func (f *factory) Metadata() hal.Metadata {
 	return f.meta
 }
 
-//Implement hal.Driver interface
+// Implement hal.Driver interface
 func (f *factory) GetParameters() []hal.ConfigParameter {
 	return f.parameters
 }
@@ -85,7 +85,7 @@ func (f *factory) NewDriver(parameters map[string]interface{}, hardwareResources
 	driver := &AtlasEZO{
 		addr:  byte(address),
 		bus:   hardwareResources.(i2c.Bus),
-		delay: time.Second,
+		delay: 1500 * time.Millisecond,
 		meta: hal.Metadata{
 			Name:         _ezoName,
 			Description:  "Atlas Scientific EZO board for pH sensor",
