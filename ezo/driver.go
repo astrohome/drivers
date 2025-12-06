@@ -65,7 +65,25 @@ func (a *AtlasEZO) read() (string, error) {
 	if payload[0] != byte(1) {
 		return "", fmt.Errorf("Failed to execute. Error:%s", string(payload))
 	}
-	p := strings.Trim(string(payload[1:]), "\000")
+
+	// --- NEW LOGIC ---
+	// Convert to string
+	raw := string(payload[1:])
+
+	// 1. Cut at the first Null Byte (ignore everything after)
+	if idx := strings.Index(raw, "\x00"); idx != -1 {
+		raw = raw[:idx]
+	}
+
+	// 2. Also Cut at the first 0xFF (just in case)
+	if idx := strings.Index(raw, "\xff"); idx != -1 {
+		raw = raw[:idx]
+	}
+
+	// 3. Trim whitespace/nulls just to be safe
+	p := strings.TrimSpace(raw)
+	// -----------------
+
 	return p, nil
 }
 
